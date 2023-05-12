@@ -3,11 +3,13 @@ from model import get_model
 import torch
 import config
 
-
-
-def predict_single():
+def predict_single(img_path=None):
     device = get_device()
-    image = get_image(config.PATH,device)
+    image = 0
+    if img_path is None:
+        image = get_image(config.PATH,device)
+    else:
+        image = get_image(img_path,device)
     model = get_model(device)
     model.eval()
     xb = image.unsqueeze(0)
