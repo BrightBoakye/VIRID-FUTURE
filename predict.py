@@ -6,7 +6,7 @@ import config
 
 
 # Set up OpenAI API credentials
-openai.api_key = "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"
+openai.api_key = "[Secret-Key]"
 
 
 # function to call OpenAI API and get insights and recommendations
