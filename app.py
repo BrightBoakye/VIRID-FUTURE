@@ -1,14 +1,13 @@
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, jsonify, render_template
 from werkzeug.utils import secure_filename
 import os
-from predict import predict_single
-#from ViridAI import predict_single
+from ViridAI import predict_single
 from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploaded_files'
-CORS(app)
 
+CORS(app, origins = '*')
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -18,7 +17,7 @@ def index():
 def upload():
     return render_template('upload.html')
 
-@app.route('/uploader', methods=['POST', 'GET'])
+@app.route('/uploader', methods=['POST'])
 def uploader():
     if request.method == "POST":
         try:
@@ -34,13 +33,17 @@ def uploader():
             f.save(file_path)
 
             predicted_label, recommendation = predict_single(file_path)
-           # recommendation_sentences = recommendation.split(". ")
-
             
-            return render_template('uploader.html', label=predicted_label, recommendation=recommendation)
+            response = {
+                'label': predicted_label,
+                'recommendation': recommendation
+            }
+            
+            return jsonify(response)
 
-        except:
-            return render_template('uploader.html', message="Error uploading files!")
+        except Exception as e:
+            print(str(e))
+            return jsonify({'error': 'Error uploading files!'})
 
     return redirect('/upload')
 
